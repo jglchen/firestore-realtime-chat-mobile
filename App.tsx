@@ -1,20 +1,33 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import * as React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import Home from './screens/home';
+import ChatRoom from './screens/chatroom';
 
-export default function App() {
+const Stack = createNativeStackNavigator();
+
+function App() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="Home">
+        <Stack.Screen 
+           name="Home" 
+           component={Home}
+           options={{ title: 'Join Room' }}
+           />
+        <Stack.Screen 
+           name="ChatRoom" 
+           component={ChatRoom} 
+           options={({ route }: {route: any}) => {
+              if (!route.params?.roomid) {
+                 return ({title: 'ChatRoom'});
+              }
+              return ({title: 'ChatRoom: '+route.params?.roomid});
+           }}
+           />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+export default App;
