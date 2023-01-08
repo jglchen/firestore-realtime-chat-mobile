@@ -20,3 +20,5 @@ This is a react native(mobile) version of [Chat Applications with Cloud Firestor
 ### [React GitHub](https://github.com/jglchen/firestore-realtime-chat)
 ### Docker: docker run -p 3000:3000 jglchen/firestore-realtime-chat
 ### back To [Series Home](https://jglchen.github.io/)
+
+{% include giscus.html %}
