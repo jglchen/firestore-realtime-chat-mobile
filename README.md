@@ -1,6 +1,6 @@
 # React Native Chat Applications with Cloud Firestore
 
-This is a react native(mobile) version of [Chat Applications with Cloud Firestore](https://github.com/jglchen/firestore-realtime-chat), a real-time chat application with [Firebase Cloud FireStore](https://firebase.google.com/products/firestore).
+This is a react native(mobile) version of [Chat Applications with Cloud Firestore](https://jglchen.github.io/firestore-realtime-chat), a real-time chat application with [Firebase Cloud FireStore](https://firebase.google.com/products/firestore).
 
 **iOS** and **Android** mobile apps are developed with **React Native**, anyone who is interested can test the apps through the [Expo Publish Link](https://expo.dev/@jglchen/firestore-realtime-chat) with [Expo Go](https://expo.dev/client) app.
 
