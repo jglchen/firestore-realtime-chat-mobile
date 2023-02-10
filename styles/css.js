@@ -48,4 +48,8 @@ export const styles = StyleSheet.create({
       borderColor: '#888',
       marginTop: 10
     }, 
+    scrollView: {
+      paddingTop: 10,
+      paddingHorizontal: 5
+    },
 });
