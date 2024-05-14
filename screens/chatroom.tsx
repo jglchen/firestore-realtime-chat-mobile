@@ -35,14 +35,15 @@ interface PropsType {
 }
 
 function ChatRoom({ route, navigation }: PropsType){
-    const { roomid, user } = route.params;
-    const [users, setUsers] = useState<User[]>([]);
-    const [messages, setMessages] = useState<Message[]>([]);
-    const [typingUsers, setTypingUsers] = useState<User[]>([]);
-    const [newMessage, setNewMessage] = useState("");
-    const { isTyping, startTyping, cancelTyping } = useTyping();
-    const [timeDiff, setTimeDiff] = useState(0);
-    const viewRef = useRef(null);
+   const { roomid, user } = route.params;
+   const [users, setUsers] = useState<User[]>([]);
+   const [messages, setMessages] = useState<Message[]>([]);
+   const [typingUsers, setTypingUsers] = useState<User[]>([]);
+   const [newMessage, setNewMessage] = useState("");
+   const { isTyping, startTyping, cancelTyping } = useTyping();
+   const [timeDiff, setTimeDiff] = useState(0);
+   const viewRef = useRef(null);
+   const PUBLIC__CODE = PUBLIC_CODE || process.env.EXPO_PUBLIC_PUBLIC_CODE;
 
    useEffect(() => {
       async function addUserToRoom(){
@@ -59,7 +60,7 @@ function ChatRoom({ route, navigation }: PropsType){
                await setDoc(doc(db, "chat", roomid, "users", userID), {...userData, createdAt: Timestamp.now().toMillis()});
             }else{
                //Check if user with the same name exists in users
-               const q = query(collection(db, "chat", roomid, "users"), where("name", "==", user.name), where("publiccode", "==", PUBLIC_CODE));
+               const q = query(collection(db, "chat", roomid, "users"), where("name", "==", user.name), where("publiccode", "==", PUBLIC__CODE));
                const querySnapshot = await getDocs(q);
                if (querySnapshot.empty){
                   await setDoc(doc(db, "chat", roomid, "users", userID), {...userData, createdAt: Timestamp.now().toMillis()});
@@ -90,7 +91,7 @@ function ChatRoom({ route, navigation }: PropsType){
    },[roomid, user]);
     
    useEffect(() => {
-      const q = query(collection(db, "chat", roomid, "users"), where("publiccode", "==", PUBLIC_CODE));
+      const q = query(collection(db, "chat", roomid, "users"), where("publiccode", "==", PUBLIC__CODE));
       getDocs(q)
       .then((querySnapshot) => {
          const userList: User[] = [];
@@ -105,7 +106,7 @@ function ChatRoom({ route, navigation }: PropsType){
          console.error(error);
       });
 
-      const q1 = query(collection(db, "chat", roomid, "recent"), where("key", "==", "adduser"), where("publiccode", "==", PUBLIC_CODE));
+      const q1 = query(collection(db, "chat", roomid, "recent"), where("key", "==", "adduser"), where("publiccode", "==", PUBLIC__CODE));
       const unsubscribe1 = onSnapshot(q1, (querySnapshot) => {
          querySnapshot.forEach((doc) => {
             setUsers((prev: User[]) => {
@@ -124,7 +125,7 @@ function ChatRoom({ route, navigation }: PropsType){
          });
       });
 
-      const q2 = query(collection(db, "chat", roomid, "recent"), where("key", "==", "removeuser"), where("publiccode", "==", PUBLIC_CODE));
+      const q2 = query(collection(db, "chat", roomid, "recent"), where("key", "==", "removeuser"), where("publiccode", "==", PUBLIC__CODE));
       const unsubscribe2 = onSnapshot(q2, (querySnapshot) => {
          querySnapshot.forEach((doc) => {
             setUsers((prev: User[]) => {
@@ -142,7 +143,7 @@ function ChatRoom({ route, navigation }: PropsType){
    },[]);
 
    useEffect(() => {
-      const q = query(collection(db, "chat", roomid, "typingusers"), where("publiccode", "==", PUBLIC_CODE));
+      const q = query(collection(db, "chat", roomid, "typingusers"), where("publiccode", "==", PUBLIC__CODE));
       getDocs(q)
       .then((querySnapshot) => {
          const userList: User[] = [];
@@ -157,7 +158,7 @@ function ChatRoom({ route, navigation }: PropsType){
          console.error(error);
       });
 
-      const q1 = query(collection(db, "chat", roomid, "recent"), where("key", "==", "addtypinguser"), where("publiccode", "==", PUBLIC_CODE));
+      const q1 = query(collection(db, "chat", roomid, "recent"), where("key", "==", "addtypinguser"), where("publiccode", "==", PUBLIC__CODE));
       const unsubscribe1 = onSnapshot(q1, (querySnapshot) => {
          querySnapshot.forEach((doc) => {
             setTypingUsers((prev: User[]) => {
@@ -175,7 +176,7 @@ function ChatRoom({ route, navigation }: PropsType){
          });
       });
 
-      const q2 = query(collection(db, "chat", roomid, "recent"), where("key", "==", "removetypinguser"), where("publiccode", "==", PUBLIC_CODE));
+      const q2 = query(collection(db, "chat", roomid, "recent"), where("key", "==", "removetypinguser"), where("publiccode", "==", PUBLIC__CODE));
       const unsubscribe2 = onSnapshot(q2, (querySnapshot) => {
          querySnapshot.forEach((doc) => {
             setTypingUsers((prev: User[]) => {
@@ -193,7 +194,7 @@ function ChatRoom({ route, navigation }: PropsType){
    },[]);
 
    useEffect(() => {
-      const q = query(collection(db, "chat", roomid, "messages"), where("publiccode", "==", PUBLIC_CODE), orderBy('sentAt'));
+      const q = query(collection(db, "chat", roomid, "messages"), where("publiccode", "==", PUBLIC__CODE), orderBy('sentAt'));
       getDocs(q)
       .then((querySnapshot) => {
          const msgList: Message[] = [];
@@ -210,7 +211,7 @@ function ChatRoom({ route, navigation }: PropsType){
          console.error(error);
       });
       
-      const q1 = query(collection(db, "chat", roomid, "recent"), where("key", "==", "addmessage"), where("publiccode", "==", PUBLIC_CODE));
+      const q1 = query(collection(db, "chat", roomid, "recent"), where("key", "==", "addmessage"), where("publiccode", "==", PUBLIC__CODE));
       const unsubscribe = onSnapshot(q1, (querySnapshot) => {
          querySnapshot.forEach((doc) => {
             setMessages((prev: Message[]) => {
@@ -254,7 +255,7 @@ function ChatRoom({ route, navigation }: PropsType){
    }
 
    async function clearChatRoom() {
-      const qMsg = query(collection(db, "chat", roomid, "recent"), where("key", "==", "addmessage"), where("publiccode", "==", PUBLIC_CODE));
+      const qMsg = query(collection(db, "chat", roomid, "recent"), where("key", "==", "addmessage"), where("publiccode", "==", PUBLIC__CODE));
       const queryMsg = await getDocs(qMsg);
       if (!queryMsg.empty){
          let dataValid = false;
@@ -267,7 +268,7 @@ function ChatRoom({ route, navigation }: PropsType){
             return '';
          }
       }
-      const qUser = query(collection(db, "chat", roomid, "recent"), where("key", "==", "adduser"), where("publiccode", "==", PUBLIC_CODE));
+      const qUser = query(collection(db, "chat", roomid, "recent"), where("key", "==", "adduser"), where("publiccode", "==", PUBLIC__CODE));
       const queryUser = await getDocs(qUser);
       if (!queryUser.empty){
          let dataValid = false;
@@ -291,9 +292,9 @@ function ChatRoom({ route, navigation }: PropsType){
       await clearRecent();
       return 'EmptyRoom';
    }
- 
+
    async function clearMessages() {
-      const q = query(collection(db, "chat", roomid, "messages"), where("publiccode", "==", PUBLIC_CODE));
+      const q = query(collection(db, "chat", roomid, "messages"), where("publiccode", "==", PUBLIC__CODE));
       const querySnapshot = await getDocs(q);
       if (querySnapshot.empty){
          return;
@@ -305,7 +306,7 @@ function ChatRoom({ route, navigation }: PropsType){
    }
     
    async function clearTypingUsers() {
-      const q = query(collection(db, "chat", roomid, "typingusers"), where("publiccode", "==", PUBLIC_CODE));
+      const q = query(collection(db, "chat", roomid, "typingusers"), where("publiccode", "==", PUBLIC__CODE));
       const querySnapshot = await getDocs(q);
       if (querySnapshot.empty){
          return;
@@ -317,7 +318,7 @@ function ChatRoom({ route, navigation }: PropsType){
    }
 
    async function clearRecent() {
-      const q = query(collection(db, "chat", roomid, "recent"), where("publiccode", "==", PUBLIC_CODE));
+      const q = query(collection(db, "chat", roomid, "recent"), where("publiccode", "==", PUBLIC__CODE));
       const querySnapshot = await getDocs(q);
       if (querySnapshot.empty){
          return;
@@ -331,15 +332,20 @@ function ChatRoom({ route, navigation }: PropsType){
    }
 
    async function clearUsers() {
-      const q = query(collection(db, "chat", roomid, "users"), where("publiccode", "==", PUBLIC_CODE));
-      const querySnapshot = await getDocs(q);
-      if (querySnapshot.empty){
-         return;
-      }
+      try {
+
+         const q = query(collection(db, "chat", roomid, "users"), where("publiccode", "==", PUBLIC__CODE));
+         const querySnapshot = await getDocs(q);
+         if (querySnapshot.empty){
+            return;
+         }
       
-      querySnapshot.forEach(async(item) => {
-         await deleteDoc(doc(db, "chat", roomid, "users", item.id));
-      }); 
+         querySnapshot.forEach(async(item) => {
+            await deleteDoc(doc(db, "chat", roomid, "users", item.id));
+         });
+      }catch(error){
+         console.error("Error found:", error);
+      }
    }
     
    useEffect(() => {
@@ -347,20 +353,25 @@ function ChatRoom({ route, navigation }: PropsType){
          if (!user){
             return;
          }
-         await deleteDoc(doc(db, "chat", roomid, "users", user.id));
          
-         //Check if collection of users is empty
-         const q = query(collection(db, "chat", roomid, "users"), where("publiccode", "==", PUBLIC_CODE));
-         const querySnapshot = await getDocs(q);
-         if (querySnapshot.empty){
-            await clearMessages();
-            await clearTypingUsers();
-            await clearRecent();
-         }else{
-            const removeUser = {key: 'removeuser', id: user.id, publiccode: PUBLIC_CODE};
-            await setDoc(doc(db, "chat", roomid, "recent", "removeuser"), removeUser);
-            const storeKey = 'removeuser_' + roomid;
-            store(storeKey, JSON.stringify(removeUser));
+         try {
+            await deleteDoc(doc(db, "chat", roomid, "users", user.id));
+         
+            //Check if collection of users is empty
+            const q = query(collection(db, "chat", roomid, "users"), where("publiccode", "==", PUBLIC__CODE));
+            const querySnapshot = await getDocs(q);
+            if (querySnapshot.empty){
+               await clearMessages();
+               await clearTypingUsers();
+               await clearRecent();
+            }else{
+               const removeUser = {key: 'removeuser', id: user.id, publiccode: PUBLIC__CODE};
+               await setDoc(doc(db, "chat", roomid, "recent", "removeuser"), removeUser);
+               const storeKey = 'removeuser_' + roomid;
+               store(storeKey, JSON.stringify(removeUser));
+            }
+         }catch(error){
+            console.error("Error found:", error);
          }
       });
    },[navigation, user]);
@@ -368,44 +379,60 @@ function ChatRoom({ route, navigation }: PropsType){
    const sendMessage = async (messageBody: string) => {
       if (!messageBody) return;
 
-      const sendUser = {...user};
-      delete sendUser.publiccode;
-      setMessages((prev: Message[]) => {
-         const message = { id: 'temp', user: sendUser, body: messageBody, sentAt: Timestamp.now().toMillis() };
-         return [...prev, message];
-      });
-      const msgBody = {user: sendUser, body: messageBody, sentAt: Timestamp.now().toMillis(), publiccode: PUBLIC_CODE };
-      const docRef = await addDoc(collection(db, "chat", roomid, "messages"), msgBody);
-      await setDoc(doc(db, "chat", roomid, "recent", "addmessage"), {key: 'addmessage', id: docRef.id, ...msgBody});
+      try {
+
+         const sendUser = {...user};
+         delete sendUser.publiccode;
+         setMessages((prev: Message[]) => {
+            const message = { id: 'temp', user: sendUser, body: messageBody, sentAt: Timestamp.now().toMillis() };
+            return [...prev, message];
+         });
+         const msgBody = {user: sendUser, body: messageBody, sentAt: Timestamp.now().toMillis(), publiccode: PUBLIC__CODE };
+         const docRef = await addDoc(collection(db, "chat", roomid, "messages"), msgBody);
+         await setDoc(doc(db, "chat", roomid, "recent", "addmessage"), {key: 'addmessage', id: docRef.id, ...msgBody});
+   
+      }catch(error){
+         console.error("Error found:", error);
+      }
    };
 
    const startTypingMessage = async () => {
       if (!user) return;
 
-      const userData = {...user};
-      delete userData.id;
-      await setDoc(doc(db, "chat", roomid, "typingusers", user.id), userData);
+      try {
 
-      const addedUser = {key: 'addtypinguser', ...user};
-      await setDoc(doc(db, "chat", roomid, "recent", "addtypinguser"), addedUser);
-      //Check the recent removed typinguser
-      const storeKey = 'removetypinguser_' + roomid;
-      const removedUser = JSON.parse(store(storeKey));
-      if (removedUser?.id === user.id){
-         store.remove(storeKey);
-         await deleteDoc(doc(db, "chat", roomid, "recent", "removetypinguser"));
+         const userData = {...user};
+         delete userData.id;
+         await setDoc(doc(db, "chat", roomid, "typingusers", user.id), userData);
+
+         const addedUser = {key: 'addtypinguser', ...user};
+         await setDoc(doc(db, "chat", roomid, "recent", "addtypinguser"), addedUser);
+         //Check the recent removed typinguser
+         const storeKey = 'removetypinguser_' + roomid;
+         const removedUser = JSON.parse(store(storeKey));
+         if (removedUser?.id === user.id){
+            store.remove(storeKey);
+            await deleteDoc(doc(db, "chat", roomid, "recent", "removetypinguser"));
+         }
+      }catch(error){
+         //console.error("Error found:", error);
       }
    };
  
    const stopTypingMessage = async () => {
       if (!user) return;
        
-      await deleteDoc(doc(db, "chat", roomid, "typingusers", user.id));
+      try {
+         await deleteDoc(doc(db, "chat", roomid, "typingusers", user.id));
 
-      const removeUser = {key: 'removetypinguser', id: user.id, publiccode: PUBLIC_CODE};
-      await setDoc(doc(db, "chat", roomid, "recent", "removetypinguser"), removeUser);
-      const storeKey = 'removetypinguser_' + roomid;
-      store(storeKey, JSON.stringify(removeUser));
+         const removeUser = {key: 'removetypinguser', id: user.id, publiccode: PUBLIC__CODE};
+         await setDoc(doc(db, "chat", roomid, "recent", "removetypinguser"), removeUser);
+         const storeKey = 'removetypinguser_' + roomid;
+         store(storeKey, JSON.stringify(removeUser));
+
+      }catch(error){
+         //console.error("Error found:", error);
+      }
    };
 
    const handleSendMessage = () => {

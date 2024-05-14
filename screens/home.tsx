@@ -26,6 +26,27 @@ function Home({ navigation }: PropsType){
        return;
     }
 
+    try{
+      const response = await axios.get("https://api.randomuser.me/");
+      const  result =  response.data.results[0];
+      if (result.id.name && result.id.value){
+        const user = {
+          id: `${result.id.name}_${result.id.value?.replace(/ /g, '-')}`,
+          name: result.name.first,
+          picture: result.picture.thumbnail,
+          email: result.email,
+          publiccode: PUBLIC_CODE || process.env.EXPO_PUBLIC_PUBLIC_CODE,
+        };
+
+        navigation.navigate('ChatRoom', {roomid: roomName, user});
+        setRoomName('');
+        Keyboard.dismiss();
+      }
+    }catch(error){
+      console.error("Error found:", error);
+    }
+
+    /*
     let result: any;
     do {
        const response = await axios.get("https://api.randomuser.me/");
@@ -43,6 +64,7 @@ function Home({ navigation }: PropsType){
     navigation.navigate('ChatRoom', {roomid: roomName, user});
     setRoomName('');
     Keyboard.dismiss();
+    */
   }
 
   return (
